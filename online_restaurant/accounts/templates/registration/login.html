@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In | SAVOUR</title>
+    <link rel="stylesheet" href="{% static 'menu/css/style.css' %}">
+</head>
+<body>
+
+<header class="navbar">
+    <a href="{% url 'dish_list' %}" class="logo">SAVOUR<span>.</span></a>
+    <nav class="nav-links">
+        <a href="{% url 'dish_list' %}">Back to Menu</a>
+        <a href="{% url 'register' %}">Sign Up</a>
+    </nav>
+</header>
+
+<main class="auth-section">
+    <div class="auth-card">
+        <p class="eyebrow">WELCOME BACK</p>
+        <h1>Log in</h1>
+        <p class="auth-description">Good food is just a few clicks away.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="auth-error-box">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="auth-field">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+
+            <div class="auth-field">
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+                {{ form.password.errors }}
+            </div>
+
+            <button type="submit" class="auth-button">Log In</button>
+        </form>
+
+        <p class="auth-switch">
+            Don't have an account?
+            <a href="{% url 'register' %}">Sign up</a>
+        </p>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>SAVOUR.</p>
+</footer>
+
+</body>
+</html>

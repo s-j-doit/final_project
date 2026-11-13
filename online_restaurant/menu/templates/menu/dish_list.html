@@ -1,0 +1,165 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu | SAVOUR</title>
+    <link rel="stylesheet" href="{% static 'menu/css/style.css' %}">
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="{% url 'dish_list' %}" class="logo">SAVOUR<span>.</span></a>
+
+        <nav class="nav-links">
+            {% if user.is_authenticated %}
+                <a href="{% url 'cart_detail' %}">Shopping Cart</a>
+                <span class="user-greeting">{{ user.username }}</span>
+
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">Log Out</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Log In</a>
+                <a href="{% url 'register' %}">Sign Up</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        <section class="menu-section" id="menu">
+
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">SAVOUR THE TASTE</p>
+                    <h2>Menu</h2>
+                </div>
+                <p class="dish-count">{{ dishes|length }} dishes</p>
+            </div>
+
+            <form method="GET" class="filter-panel">
+
+                <div class="filter-field">
+                    <label for="category">Category</label>
+                    <select name="category" id="category">
+                        <option value="">All categories</option>
+                        {% for value, label in categories %}
+                            <option value="{{ value }}"
+                                {% if request.GET.category == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label for="spice_level">Spice level</label>
+                    <select name="spice_level" id="spice_level">
+                        <option value="">Any level</option>
+                        {% for level in "01234" %}
+                            <option value="{{ level }}"
+                                {% if request.GET.spice_level == level %}selected{% endif %}>
+                                {{ level }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label for="walnuts">Contains walnuts</label>
+                    <select name="walnuts" id="walnuts">
+                        <option value="">Any</option>
+                        <option value="yes" {% if request.GET.walnuts == 'yes' %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if request.GET.walnuts == 'no' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <label for="vegetarian">Vegetarian</label>
+                    <select name="vegetarian" id="vegetarian">
+                        <option value="">Any</option>
+                        <option value="yes" {% if request.GET.vegetarian == 'yes' %}selected{% endif %}>Yes</option>
+                        <option value="no" {% if request.GET.vegetarian == 'no' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="filter-button">Apply</button>
+                    <a href="{% url 'dish_list' %}" class="clear-button">Clear</a>
+                </div>
+
+            </form>
+
+            <div class="dish-grid">
+                {% for dish in dishes %}
+                    <article class="dish-card">
+
+                        {% if dish.image %}
+                            <img
+                                src="{{ dish.image.url }}"
+                                alt="{{ dish.name }}"
+                                class="dish-image"
+                            >
+                        {% else %}
+                            <div class="image-placeholder">No image available</div>
+                        {% endif %}
+
+                        <div class="dish-content">
+                            <p class="dish-category">{{ dish.get_category_display }}</p>
+                            <h3>{{ dish.name }}</h3>
+                            <p class="dish-description">{{ dish.description }}</p>
+
+                            <div class="dish-details">
+                                <span>🌶️ Spice: {{ dish.spice_level }}/4</span>
+
+                                <span>
+                                    {% if dish.contains_walnuts %}
+                                        Contains walnuts
+                                    {% else %}
+                                        No walnuts
+                                    {% endif %}
+                                </span>
+
+                                <span>
+                                    {% if dish.is_vegetarian %}
+                                        Vegetarian
+                                    {% else %}
+                                        Non-vegetarian
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            <div class="dish-footer">
+                                <p class="dish-price">${{ dish.price }}</p>
+
+                                <form method="POST" action="{% url 'add_to_cart' dish.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="add-button">
+                                        Add to cart +
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </article>
+
+                {% empty %}
+                    <p class="empty-message">
+                        No dishes found. Try changing your filters.
+                    </p>
+                {% endfor %}
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>SAVOUR.</p>
+    </footer>
+
+</body>
+</html>

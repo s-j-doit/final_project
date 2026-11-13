@@ -1,0 +1,59 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed | SAVOUR</title>
+    <link rel="stylesheet" href="{% static 'menu/css/style.css' %}">
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="{% url 'dish_list' %}" class="logo">SAVOUR<span>.</span></a>
+
+        <nav class="nav-links">
+            <a href="{% url 'dish_list' %}">Menu</a>
+            <span class="user-greeting">Hello, {{ user.username }}!</span>
+        </nav>
+    </header>
+
+    <main class="success-section">
+        <div class="success-card">
+            <div class="success-icon">✓</div>
+
+            <p class="eyebrow">THANK YOU FOR YOUR ORDER</p>
+            <h1>Order confirmed!</h1>
+
+            <p>Your purchase was successful.</p>
+
+            <p class="order-number">Order #{{ order.id }}</p>
+
+            <h2>Order details</h2>
+
+            {% for item in order.items.all %}
+                <div class="success-item">
+                    <span>{{ item.dish_name }} × {{ item.quantity }}</span>
+                    <strong>${{ item.subtotal|floatformat:2 }}</strong>
+                </div>
+            {% endfor %}
+
+            <div class="success-total">
+                <span>Total paid</span>
+                <strong>${{ order.total|floatformat:2 }}</strong>
+            </div>
+
+            <a href="{% url 'dish_list' %}" class="back-menu-button">
+
+                Back to menu
+            </a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>SAVOUR.</p>
+    </footer>
+
+</body>
+</html>

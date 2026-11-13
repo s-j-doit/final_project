@@ -1,0 +1,56 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | SAVOUR</title>
+    <link rel="stylesheet" href="{% static 'menu/css/style.css' %}">
+</head>
+<body>
+
+<header class="navbar">
+    <a href="{% url 'dish_list' %}" class="logo">SAVOUR<span>.</span></a>
+    <nav class="nav-links">
+        <a href="{% url 'dish_list' %}">Back to Menu</a>
+        <a href="{% url 'login' %}">Log In</a>
+    </nav>
+</header>
+
+<main class="auth-section">
+    <div class="auth-card">
+        <p class="eyebrow">JOIN SAVOUR</p>
+        <h1>Create account</h1>
+        <p class="auth-description">Create an account and discover your next favourite meal.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="auth-field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <p class="auth-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="auth-button">Create Account</button>
+        </form>
+
+        <p class="auth-switch">
+            Already have an account?
+            <a href="{% url 'login' %}">Log in</a>
+        </p>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>SAVOUR.</p>
+</footer>
+
+</body>
+</html>
+
